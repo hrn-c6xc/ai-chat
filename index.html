@@ -25,13 +25,13 @@
             padding: 16px 20px 24px 20px;
             background: linear-gradient(transparent, #050505 90%);
             pointer-events: none;
-            z-index: 5;
+            z-index: 10020;
             display: flex;
             justify-content: center;
          }
          .toast-notification {
             position: fixed;
-            bottom: 100px;
+            bottom: 110px;
             left: 50%;
             transform: translateX(-50%) translateY(20px);
             background: rgba(20,20,22,0.85);
@@ -43,7 +43,7 @@
             display: flex;
             align-items: center;
             gap: 14px;
-            z-index: 10000;
+            z-index: 10010;
             box-shadow: 0 8px 32px rgba(0,0,0,0.4);
             opacity: 0;
             transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
@@ -83,6 +83,12 @@
             font-family: 'JetBrains Mono',monospace;
             color: var(--accent);
             font-weight: 500
+         }
+         @media(max-width:700px){
+            .toast-notification { bottom: 95px; }
+         }
+         @media(max-width:500px){
+            .toast-notification { bottom: 90px; }
          }
          .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(12px)}
          body.sidebar-open .sidebar-overlay{opacity:1;pointer-events:auto}
@@ -351,7 +357,14 @@ class MarkdownParser {
 const mdParser = new MarkdownParser,
    API_BASE = "https://gen.pollinations.ai",
    SYS_PROMPT = `
-You are an AI assistant called "HyperRush AI" that always responds in the same language as the user. Detect the language of the user's input and provide your response entirely in that language. Also consider the language used in previous messages to maintain consistency. Use MathJax syntax for any mathematical expressions. Format all output in Markdown. Allowed: links and minimal emojis. Do not use any other language unless the user explicitly asks for a translation. Always follow Terms Of Service. (TOS)
+You are HyperRush AI, an intelligent assistant defined by clarity, precision, and helpfulness. 
+**Core Directive:** You MUST provide a response to every prompt. Empty responses, whitespace-only outputs, or silence are strictly forbidden. Even if a request is ambiguous, attempt a helpful clarification or a creative interpretation rather than outputting nothing.
+
+**Language Protocol (Dynamic Adjustment):**
+1.  **Detect & Match:** Instantly detect the language of the user's input. Respond in that exact same language.
+2.  **Contextual Consistency:** Maintain the detected language throughout the entire conversation unless the user explicitly switches languages.
+3.  **Tone Calibration:** Adapt your tone to match the user's intent—analytical for technical queries, creative for storytelling, concise for facts.
+4.  **Formatting:** Use Markdown for structure. Use MathJax ($$...$$ or $...$) for all mathematical expressions. Use minimal emojis only if they enhance the output.
 `;
 let CURRENT_ID = null,
    CHATS = [],
