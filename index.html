@@ -18,14 +18,61 @@
          *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
          body{background:var(--bg-base);color:var(--text-main);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;height:100dvh;display:flex;overflow:hidden;-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none}
          
-         /* Modal Styles */
-         .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:9999;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
-         .modal-box{background:var(--bg-surface);border:1px solid var(--border-subtle);padding:32px;border-radius:16px;max-width:400px;width:90%;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,0.5)}
-         .modal-box h2{color:var(--danger);margin-bottom:12px;font-size:20px}
-         .modal-box p{color:var(--text-muted);margin-bottom:24px;font-size:14px;line-height:1.5}
-         .countdown-timer{font-size:32px;font-weight:700;color:var(--accent);font-family:'JetBrains Mono',monospace;margin-bottom:24px}
-         .modal-close-btn{background:var(--accent);color:#000;border:none;padding:10px 24px;border-radius:8px;font-weight:600;cursor:pointer;transition:opacity 0.2s}
-         .modal-close-btn:hover{opacity:0.9}
+         /* Toast Notification Styles */
+         .toast-notification {
+            position: fixed;
+            bottom: 100px; /* Above the input bar */
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(20, 20, 22, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            z-index: 10000;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+            max-width: 90%;
+         }
+         .toast-notification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
+         }
+         .toast-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--danger);
+            flex-shrink: 0;
+         }
+         .toast-content {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+         }
+         .toast-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+         }
+         .toast-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+         }
+         .toast-timer {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent);
+            font-weight: 500;
+         }
 
          .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(12px)}
          body.sidebar-open .sidebar-overlay{opacity:1;pointer-events:auto}
@@ -124,13 +171,16 @@
       </style>
    </head>
    <body>
-      <!-- Quota Exceeded Modal -->
-      <div id="quota-modal" class="modal-overlay">
-         <div class="modal-box">
-            <h2>Limiet Bereikt</h2>
-            <p>Je gratis quota is opgebruikt. De limiet wordt elk uur gereset. Even geduld...</p>
-            <div id="countdown" class="countdown-timer">--:--</div>
-            <button class="modal-close-btn" onclick="closeQuotaModal()">Begrepen</button>
+      <!-- Soft Toast Notification -->
+      <div id="quota-toast" class="toast-notification">
+         <svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+         </svg>
+         <div class="toast-content">
+            <div class="toast-title">Limiet bereikt</div>
+            <div class="toast-subtitle">Nieuwe credits over <span id="toast-countdown" class="toast-t">--:--</span></div>
          </div>
       </div>
 
@@ -338,7 +388,6 @@ function dbOperation(mode, operation) {
 }
 
 function saveChatsToDB() {
-    // We wrap the CHATS array into an object with a fixed ID so we can easily replace it
     const data = { id: "main_history", chats: CHATS };
     return dbOperation("readwrite", store => store.put(data));
 }
@@ -362,47 +411,55 @@ function renderMathLive(e) {
    t - lastMathjaxRender < 100 || (lastMathjaxRender = t, MathJax.typesetPromise([e]).catch((e => console.log(e))))
 }
 
-// Quota Modal Logic
-function showQuotaModal() {
-    const modal = document.getElementById('quota-modal');
-    modal.style.display = 'flex';
-    updateCountdown();
+// Soft Toast Logic
+let countdownInterval = null;
+
+function showQuotaToast() {
+    const toast = document.getElementById('quota-toast');
+    toast.classList.add('show');
+    
+    // Clear previous interval if exists
+    if (countdownInterval) clearInterval(countdownInterval);
+    
+    updateCountdown(); // Run immediately
+    countdownInterval = setInterval(updateCountdown, 1000);
 }
 
-function closeQuotaModal() {
-    const modal = document.getElementById('quota-modal');
-    modal.style.display = 'none';
+function hideQuotaToast() {
+    const toast = document.getElementById('quota-toast');
+    toast.classList.remove('show');
+    if (countdownInterval) clearInterval(countdownInterval);
 }
 
 function updateCountdown() {
     const now = new Date();
-    // Calculate time until next hour (reset time)
+    // Calculate time until the NEXT full hour
     const nextHour = new Date(now);
     nextHour.setHours(nextHour.getHours() + 1, 0, 0, 0); 
     
     const diff = nextHour - now;
     
+    if (diff <= 0) {
+        // Time has passed, refresh balance
+        hideQuotaToast();
+        updateBalance();
+        return;
+    }
+    
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
     
     const str = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    document.getElementById('countdown').innerText = str;
-    
-    // Only interval if modal is visible
-    if (document.getElementById('quota-modal').style.display === 'flex') {
-        setTimeout(updateCountdown, 1000);
-    }
+    document.getElementById('toast-countdown').innerText = str;
 }
 
 async function init() {
    document.addEventListener("contextmenu", (e => e.preventDefault()));
-   // Re-enable select for edit inputs
    document.addEventListener("selectstart", (e => {
        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return true;
        e.preventDefault();
    }));
 
-   // Init DB first
    await initDB();
    
    try {
@@ -441,10 +498,11 @@ async function updateBalance() {
          referrerPolicy: "strict-origin-when-cross-origin"
       });
       if (t.status === 402) {
-          showQuotaModal();
-          e.innerText = "QUOTA MET";
+          showQuotaToast();
+          e.innerText = "LIMIET";
           return;
       }
+      hideQuotaToast(); // Hide toast if balance is restored
       if (!t.ok) throw new Error(`HTTP status ${t.status}`);
       const n = await t.json();
       e.innerText = Math.floor(1e3 * (n.balance || 0)).toLocaleString() + " CREDITS"
@@ -617,13 +675,11 @@ function renderMsg(e, t, n, s) {
       const e = document.createElement("div");
       e.className = "bubble";
       
-      // Bubble content wrapper
       const contentDiv = document.createElement("div");
       contentDiv.className = "bubble-content";
       contentDiv.innerText = t || "";
       e.appendChild(contentDiv);
 
-      // Actions for user message (Edit)
       const actionsDiv = document.createElement("div");
       actionsDiv.className = "actions";
       actionsDiv.innerHTML = `
@@ -655,16 +711,13 @@ function editUserMessage(index) {
     const contentDiv = bubble.querySelector('.bubble-content');
     const oldText = contentDiv.innerText;
 
-    // Hide actions while editing
     const actions = bubble.querySelector('.actions');
     if(actions) actions.style.display = 'none';
 
-    // Create textarea
     const textarea = document.createElement('textarea');
     textarea.className = 'edit-msg-textarea';
     textarea.value = oldText;
     
-    // Create save/cancel buttons
     const btns = document.createElement('div');
     btns.className = 'edit-actions';
     btns.innerHTML = `
@@ -707,19 +760,15 @@ async function saveEdit(index) {
     const chat = CHATS.find(c => c.id === CURRENT_ID);
     if (!chat) return;
 
-    // Update message text
     chat.messages[index].content = newText;
-    // Remove subsequent messages
     chat.messages = chat.messages.slice(0, index + 1);
     
     await saveChatsToDB();
 
-    // Re-render chat
     document.getElementById("chat-container").innerHTML = "";
     chat.messages.forEach((msg, i) => renderMsg(msg.role, msg.content, i, true));
 
-    // Trigger AI response
-    streamAI(false); // false because it's not a new chat, just edit
+    streamAI(false);
 }
 
 async function handleRegen(e) {
@@ -783,9 +832,8 @@ async function streamAI(isNewChat = false) {
             signal: abortController.signal
          });
       
-      // Handle 402 Quota Exceeded
       if (response.status === 402) {
-          showQuotaModal();
+          showQuotaToast();
           throw new Error("Quota Exceeded");
       }
       
