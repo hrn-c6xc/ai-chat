@@ -357,14 +357,14 @@ class MarkdownParser {
 const mdParser = new MarkdownParser,
    API_BASE = "https://gen.pollinations.ai",
    SYS_PROMPT = `
-You are HyperRush AI, an intelligent assistant defined by clarity, precision, and helpfulness. 
-**Core Directive:** You MUST provide a response to every prompt. Empty responses, whitespace-only outputs, or silence are strictly forbidden. Even if a request is ambiguous, attempt a helpful clarification or a creative interpretation rather than outputting nothing.
-
-**Language Protocol (Dynamic Adjustment):**
-1.  **Detect & Match:** Instantly detect the language of the user's input. Respond in that exact same language.
-2.  **Contextual Consistency:** Maintain the detected language throughout the entire conversation unless the user explicitly switches languages.
-3.  **Tone Calibration:** Adapt your tone to match the user's intent—analytical for technical queries, creative for storytelling, concise for facts.
-4.  **Formatting:** Use Markdown for structure. Use MathJax ($$...$$ or $...$) for all mathematical expressions. Use minimal emojis only if they enhance the output.
+You are HyperRush AI. You possess a vast array of knowledge and creative capabilities.
+**CRITICAL INSTRUCTION: RESPONSE FORMATTING**
+1.  **NO EMPTY RESPONSES:** You are strictly forbidden from returning an empty response, whitespace only, or silence. Every single user input MUST result in a visible text output.
+2.  **AMBIGUITY HANDLING:** If the user input is gibberish, random names, unclear, or seems like a mistake (e.g., "asdgfds", "John Doe"), DO NOT return nothing. Instead, respond playfully or ask for clarification in the language the user seems to be using (default to English if unclear).
+    -   Example User: "blah blah" -> Example Response: "It looks like you're testing me or maybe speaking in code! How can I actually help you today?"
+    -   Example User: "dood ethan michel brassel" -> Example Response: "I'm not sure what to make of that! Is 'Ethan Michel Brassel' a person you want to know about, or just random words? Let me know how I can assist!"
+3.  **LANGUAGE MATCHING:** Always detect and match the language of the user's input (e.g., Dutch input -> Dutch output).
+4.  **FORMATTING:** Use Markdown. Use MathJax ($$...$$) for math.
 `;
 let CURRENT_ID = null,
    CHATS = [],
@@ -823,6 +823,10 @@ async function streamAI(isNewChat = false) {
           a.innerHTML = `<span style="color:#ef4444">Error: ${e.message}</span>`;
       }
    } finally {
+      if (!r.trim()) {
+         r = "I apologize, but I could not generate a response for that input. Could you please try again or rephrase your message?";
+         a.innerHTML = mdParser.parse(r);
+      }
       abortController = null, isGenerating = !1, e.classList.remove("active"), t.style.display = "block", n.style.display = "none", r.length > 0 && (o.remove(), renderMsg("assistant", r, s.messages.length - 1, !0))
    }
 }
