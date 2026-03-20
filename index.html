@@ -277,6 +277,18 @@ let CURRENT_ID = null,
    mathjaxQueue = [],
    lastMathjaxRender = 0;
 
+// Helper to clean titles for display (force 1 line, remove markdown/html)
+function cleanTitle(text) {
+    if (!text) return "New Chat";
+    return text
+        .replace(/<br\s*\/?>/gi, ' ')     // Replace <br> with space
+        .replace(/[\n\r]+/g, ' ')          // Replace newlines with space
+        .replace(/\s+/g, ' ')              // Collapse multiple spaces
+        .replace(/[#*`_~]/g, '')           // Remove basic markdown chars
+        .trim()
+        .substring(0, 50);                 // Limit length
+}
+
 function renderMathLive(e) {
    if (!window.MathJax) return;
    const t = Date.now();
@@ -338,8 +350,11 @@ function renderSidebar() {
       titleWrap.className = "chat-title-wrap";
       
       const s = document.createElement("span");
-      s.className = "chat-title", s.innerText = t.title || "New Chat";
-      s.title = t.title || "New Chat";
+      s.className = "chat-title";
+      // Clean title for display to ensure 1 line
+      const displayTitle = cleanTitle(t.title);
+      s.innerText = displayTitle;
+      s.title = displayTitle; // Tooltip
       
       const editBtn = document.createElement("button");
       editBtn.className = "edit-title-btn";
@@ -391,8 +406,8 @@ function startEditTitle(chatId, titleElement) {
       
       const newSpan = document.createElement("span");
       newSpan.className = "chat-title";
-      newSpan.innerText = newTitle;
-      newSpan.title = newTitle;
+      newSpan.innerText = cleanTitle(newTitle);
+      newSpan.title = cleanTitle(newTitle);
       newSpan.ondblclick = (e) => {
          e.stopPropagation();
          startEditTitle(chatId, newSpan);
@@ -422,7 +437,7 @@ async function generateChatTitle(chatId, userMessage, aiResponse) {
             Authorization: `Bearer ${PK}`
          },
          body: JSON.stringify({
-            model: "openai",
+            model: "gemini-fast", // Using gemini-fast for titles
             messages: [{
                role: "system",
                content: "Generate a very short title (max 4 words) for this conversation. Respond with ONLY the title, no quotes, no punctuation. Use the same language as the user's message."
@@ -443,9 +458,9 @@ async function generateChatTitle(chatId, userMessage, aiResponse) {
       if (title && title.length > 0 && title.length <= 50) {
          const chat = CHATS.find(c => c.id === chatId);
          if (chat) {
-            chat.title = title;
+            chat.title = title; // Store raw title
             localStorage.setItem("gem_v15", JSON.stringify(CHATS));
-            renderSidebar();
+            renderSidebar(); // Re-render to show cleaned title
             return title;
          }
       }
@@ -514,9 +529,10 @@ function handleSendOrStop() {
    
    const isNewChat = !CURRENT_ID;
    
+   // Set initial title to "New Chat" immediately
    CURRENT_ID || (CURRENT_ID = Date.now().toString(), CHATS.unshift({
       id: CURRENT_ID,
-      title: t.substring(0, 40),
+      title: "New Chat", // Default title
       messages: [],
       needsTitle: true,
       firstUserMessage: t
@@ -548,7 +564,7 @@ async function streamAI(isNewChat = false) {
                Authorization: `Bearer ${PK}`
             },
             body: JSON.stringify({
-               model: "gemini-search",
+               model: "gemini-search", // Using gemini-search for chat
                messages: [{
                   role: "system",
                   content: SYS_PROMPT
