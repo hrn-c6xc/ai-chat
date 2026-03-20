@@ -178,10 +178,6 @@
             <line x1="12" y1="8" x2="12" y2="12"></line>
             <line x1="12" y1="16" x2="12.01" y2="16"></line>
          </svg>
-         <div class="toast-content">
-            <div class="toast-title">Limiet bereikt</div>
-            <div class="toast-subtitle">Nieuwe credits over <span id="toast-countdown" class="toast-t">--:--</span></div>
-         </div>
       </div>
 
       <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
@@ -198,6 +194,10 @@
          <div class="chat-list" id="chat-list"></div>
       </div>
       <div class="main">
+         <div class="toast-content">
+            <div class="toast-title">Limiet bereikt</div>
+            <div class="toast-subtitle">Nieuwe credits over <span id="toast-countdown" class="toast-t">--:--</span></div>
+         </div>
          <div class="header">
             <button class="menu-btn" onclick="toggleSidebar()">
                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -505,8 +505,7 @@ async function updateBalance() {
       hideQuotaToast(); // Hide toast if balance is restored
       if (!t.ok) throw new Error(`HTTP status ${t.status}`);
       const n = await t.json();
-      e.innerText = Math.floor(1e3 * (n.balance || 0)).toLocaleString() + " CREDITS"
-   } catch (t) {
+      e.innerText = Math.round(((n.balance || 0) + Number.EPSILON) * 1000).toLocaleString() + " CREDITS";   } catch (t) {
       console.error("Balance fetch error:", t), e.innerText = "ERROR"
    }
 }
