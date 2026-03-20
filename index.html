@@ -17,60 +17,72 @@
          ::-webkit-scrollbar-thumb:hover{background:#3f3f46}
          *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
          body{background:var(--bg-base);color:var(--text-main);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;height:100dvh;display:flex;overflow:hidden;-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none}
+         .input-wrap {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px 20px 24px 20px;
+            background: linear-gradient(transparent, #050505 90%);
+            pointer-events: none;
+            z-index: 5;
+            display: flex;
+            justify-content: center;
+         }
          .toast-notification {
-            position:absolute;
-            bottom:120px;
-            left:50%;
-            transform:translateX(-50%) translateY(20px);
-            background:rgba(20,20,22,0.85);
-            backdrop-filter:blur(12px);
-            -webkit-backdrop-filter:blur(12px);
-            border:1px solid rgba(255,255,255,0.1);
-            padding:12px 20px;
-            border-radius:12px;
-            display:flex;
-            align-items:center;
-            gap:14px;
-            z-index:10000;
-            box-shadow:0 8px 32px rgba(0,0,0,0.4);
-            opacity:0;
-            transition:all 0.4s cubic-bezier(0.16,1,0.3,1);
-            pointer-events:none;
-            max-width:600px;
-            width:calc(100% - 40px)
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(20,20,22,0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 12px 20px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            z-index: 10000;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+            pointer-events: none;
+            max-width: calc(100% - 40px);
+            width: max-content
          }
          .toast-notification.show {
-            opacity:1;
-            transform:translateX(-50%) translateY(0);
-            pointer-events:auto
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: auto
          }
          .toast-icon {
-            width:20px;
-            height:20px;
-            color:var(--danger);
-            flex-shrink:0
+            width: 20px;
+            height: 20px;
+            color: var(--danger);
+            flex-shrink: 0
          }
          .toast-content {
-            display:flex;
-            flex-direction:column;
-            gap:2px
+            display: flex;
+            flex-direction: column;
+            gap: 2px
          }
          .toast-title {
-            font-size:13px;
-            font-weight:600;
-            color:var(--text-main)
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main)
          }
          .toast-subtitle {
-            font-size:12px;
-            color:var(--text-muted);
-            display:flex;
-            align-items:center;
-            gap:6px
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px
          }
          .toast-timer {
-            font-family:'JetBrains Mono',monospace;
-            color:var(--accent);
-            font-weight:500
+            font-family: 'JetBrains Mono',monospace;
+            color: var(--accent);
+            font-weight: 500
          }
          .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99;opacity:0;pointer-events:none;transition:opacity 0.3s;backdrop-filter:blur(12px)}
          body.sidebar-open .sidebar-overlay{opacity:1;pointer-events:auto}
@@ -150,8 +162,7 @@
          .act-btn{background:none;border:none;color:#71717a;cursor:pointer;padding:6px;border-radius:6px;transition:0.15s;display:flex;align-items:center}
          .act-btn:hover{color:var(--accent);background:var(--accent-dim)}
          .act-btn svg{width:16px;height:16px;stroke-width:2}
-         .input-wrap{position:absolute;bottom:0;left:0;right:0;padding:16px 20px 24px 20px;background:linear-gradient(transparent,#050505 90%);pointer-events:none;z-index:5}
-         .input-box{max-width:680px;margin:0 auto;background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:16px;display:flex;align-items:center;padding:10px 16px;gap:12px;pointer-events:auto;transition:border-color 0.2s,background 0.2s,box-shadow 0.2s}
+         .input-box{max-width:680px;margin:0 auto;background:var(--bg-surface);border:1px solid var(--border-subtle);border-radius:16px;display:flex;align-items:center;padding:10px 16px;gap:12px;pointer-events:auto;transition:border-color 0.2s,background 0.2s,box-shadow 0.2s;width:100%}
          .input-box:focus-within{border-color:rgba(125,211,252,0.4);background:#0a0a0b;box-shadow:0 0 0 1px rgba(125,211,252,0.1)}
          textarea{flex:1;background:transparent;border:none;color:#fff;font-family:inherit;font-size:15px;resize:none;outline:none;max-height:200px;padding:0;line-height:1.5}
          .send-btn{width:34px;height:34px;border-radius:10px;border:none;background:var(--border-hover);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s}
