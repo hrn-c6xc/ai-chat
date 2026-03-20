@@ -20,26 +20,27 @@
          
          /* Toast Notification Styles - Nu position absolute */
          .toast-notification {
-            position: absolute; /* Gecorrigeerd van fixed */
-            bottom: 120px;      /* Afstand van onderkant */
-            left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: rgba(20, 20, 22, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 12px 20px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            z-index: 10000;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            pointer-events: none;
-            max-width: 90%;
-         }
+    position: absolute; /* Gecorrigeerd van fixed */
+    bottom: 120px;      /* Afstand van onderkant */
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: rgba(20, 20, 22, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 10000;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+    max-width: 600px; /* minder breedte op grote schermen */
+    width: calc(100% - 40px); /* neem bijna de hele breedte van het scherm */
+}
          .toast-notification.show {
             opacity: 1;
             transform: translateX(-50%) translateY(0);
