@@ -1,20 +1,21 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "AIClient API",
-    "version": "1.0.0",
-    "description": "API spec voor de HRN AIClient (text en image generation)."
+    "title": "HRN AIClient API",
+    "version": "1.0.3",
+    "description": "Volledige OpenAPI spec voor de HRN AIClient JavaScript bibliotheek."
   },
   "servers": [
     {
       "url": "https://gen.pollinations.ai/v1",
-      "description": "Standaard AI API endpoint"
+      "description": "Standaard AI endpoint"
     }
   ],
   "paths": {
     "/chat/completions": {
       "post": {
         "summary": "Genereer AI tekst",
+        "description": "Gebruik `AIClient.generate()` met `type='text'`.",
         "requestBody": {
           "required": true,
           "content": {
@@ -22,8 +23,10 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "apiKey": { "type": "string", "description": "Je API sleutel" },
                   "model": { "type": "string", "example": "flux" },
-                  "messages": {
+                  "systemPrompt": { "type": "string", "example": "You are a helpful assistant." },
+                  "history": {
                     "type": "array",
                     "items": {
                       "type": "object",
@@ -34,9 +37,14 @@
                       "required": ["role","content"]
                     }
                   },
-                  "seed": { "type": "integer", "example": 123456789 }
+                  "seed": { "type": "integer", "example": 123456789 },
+                  "timeout": { "type": "integer", "example": 30000 },
+                  "retry": { "type": "boolean", "example": true },
+                  "retryAttempts": { "type": "integer", "example": 2 },
+                  "retryDelay": { "type": "integer", "example": 1000 },
+                  "prompt": { "type": "string" }
                 },
-                "required": ["model","messages"]
+                "required": ["apiKey","model","prompt"]
               }
             }
           }
@@ -69,20 +77,14 @@
               }
             }
           },
-          "default": {
-            "description": "Fout",
-            "content": {
-              "application/json": {
-                "schema": { "type": "object" }
-              }
-            }
-          }
+          "default": { "description": "Fout", "content": { "application/json": { "schema": { "type": "object" } } } }
         }
       }
     },
     "/images/generations": {
       "post": {
         "summary": "Genereer AI afbeelding",
+        "description": "Gebruik `AIClient.generate()` met `type='image'`.",
         "requestBody": {
           "required": true,
           "content": {
@@ -90,22 +92,27 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "prompt": { "type": "string" },
+                  "apiKey": { "type": "string", "description": "Je API sleutel" },
                   "model": { "type": "string", "example": "flux" },
+                  "prompt": { "type": "string" },
                   "width": { "type": "integer", "example": 1024 },
                   "height": { "type": "integer", "example": 1024 },
                   "nologo": { "type": "boolean", "example": true },
                   "response_format": { "type": "string", "example": "b64_json" },
-                  "seed": { "type": "integer" }
+                  "seed": { "type": "integer", "example": 123456789 },
+                  "timeout": { "type": "integer", "example": 30000 },
+                  "retry": { "type": "boolean", "example": true },
+                  "retryAttempts": { "type": "integer", "example": 2 },
+                  "retryDelay": { "type": "integer", "example": 1000 }
                 },
-                "required": ["prompt","model","width","height","response_format"]
+                "required": ["apiKey","model","prompt","width","height","response_format"]
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "AI afbeelding response",
+            "description": "AI afbeelding response (Base64 PNG)",
             "content": {
               "application/json": {
                 "schema": {
@@ -116,7 +123,7 @@
                       "items": {
                         "type": "object",
                         "properties": {
-                          "b64_json": { "type": "string", "description": "Base64 PNG" }
+                          "b64_json": { "type": "string", "description": "Base64 encoded PNG" }
                         }
                       }
                     }
@@ -125,17 +132,21 @@
               }
             }
           },
-          "default": {
-            "description": "Fout",
-            "content": {
-              "application/json": {
-                "schema": { "type": "object" }
-              }
-            }
-          }
+          "default": { "description": "Fout", "content": { "application/json": { "schema": { "type": "object" } } } }
         }
       }
     }
   },
-  "components": {}
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Key"
+      }
+    }
+  },
+  "security": [
+    { "BearerAuth": [] }
+  ]
 }
