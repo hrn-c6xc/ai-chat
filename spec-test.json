@@ -1,0 +1,141 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "AIClient API",
+    "version": "1.0.0",
+    "description": "API spec voor de HRN AIClient (text en image generation)."
+  },
+  "servers": [
+    {
+      "url": "https://gen.pollinations.ai/v1",
+      "description": "Standaard AI API endpoint"
+    }
+  ],
+  "paths": {
+    "/chat/completions": {
+      "post": {
+        "summary": "Genereer AI tekst",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "model": { "type": "string", "example": "flux" },
+                  "messages": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "role": { "type": "string", "enum": ["system","user","assistant"] },
+                        "content": { "type": "string" }
+                      },
+                      "required": ["role","content"]
+                    }
+                  },
+                  "seed": { "type": "integer", "example": 123456789 }
+                },
+                "required": ["model","messages"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "AI tekst response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "choices": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "message": {
+                            "type": "object",
+                            "properties": {
+                              "role": { "type": "string" },
+                              "content": { "type": "string" }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Fout",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/images/generations": {
+      "post": {
+        "summary": "Genereer AI afbeelding",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "prompt": { "type": "string" },
+                  "model": { "type": "string", "example": "flux" },
+                  "width": { "type": "integer", "example": 1024 },
+                  "height": { "type": "integer", "example": 1024 },
+                  "nologo": { "type": "boolean", "example": true },
+                  "response_format": { "type": "string", "example": "b64_json" },
+                  "seed": { "type": "integer" }
+                },
+                "required": ["prompt","model","width","height","response_format"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "AI afbeelding response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "b64_json": { "type": "string", "description": "Base64 PNG" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Fout",
+            "content": {
+              "application/json": {
+                "schema": { "type": "object" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {}
+}
