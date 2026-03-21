@@ -1,0 +1,86 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "HRN AIClient API Methods",
+    "version": "1.0.3",
+    "description": "Elke public method van AIClient krijgt een eigen endpoint in de sidebar."
+  },
+  "servers": [
+    { "url": "https://gen.pollinations.ai/v1", "description": "Standaard endpoint" }
+  ],
+  "paths": {
+    "/setApiKey": {
+      "post": {
+        "summary": "Set API Key",
+        "description": "Stel de API Key in voor AIClient",
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "type": "object", "properties": { "apiKey": { "type": "string" } }, "required": ["apiKey"] } } }
+        },
+        "responses": { "200": { "description": "API Key is ingesteld" } }
+      }
+    },
+    "/setModel": {
+      "post": {
+        "summary": "Set model",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "model": { "type": "string" } }, "required": ["model"] } } } },
+        "responses": { "200": { "description": "Model is ingesteld" } }
+      }
+    },
+    "/setType": {
+      "post": {
+        "summary": "Set type (text/image)",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "type": { "type": "string", "enum": ["text","image"] } }, "required": ["type"] } } } },
+        "responses": { "200": { "description": "Type ingesteld" } }
+      }
+    },
+    "/setSystemPrompt": {
+      "post": {
+        "summary": "Set system prompt",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "systemPrompt": { "type": "string" } }, "required": ["systemPrompt"] } } } },
+        "responses": { "200": { "description": "System prompt ingesteld" } }
+      }
+    },
+    "/setTimeout": {
+      "post": {
+        "summary": "Set timeout",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "timeout": { "type": "integer" } }, "required": ["timeout"] } } } },
+        "responses": { "200": { "description": "Timeout ingesteld" } }
+      }
+    },
+    "/setSeed": {
+      "post": {
+        "summary": "Set seed",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "seed": { "type": "integer" } } } } } },
+        "responses": { "200": { "description": "Seed ingesteld" } }
+      }
+    },
+    "/setDimensions": {
+      "post": {
+        "summary": "Set width & height",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "width": { "type": "integer" }, "height": { "type": "integer" } }, "required": ["width","height"] } } } },
+        "responses": { "200": { "description": "Afmetingen ingesteld" } }
+      }
+    },
+    "/setRetry": {
+      "post": {
+        "summary": "Set retry options",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "retry": { "type": "boolean" }, "retryAttempts": { "type": "integer" }, "retryDelay": { "type": "integer" } } } } } },
+        "responses": { "200": { "description": "Retry opties ingesteld" } }
+      }
+    },
+    "/clearHistory": {
+      "post": {
+        "summary": "Clear history",
+        "responses": { "200": { "description": "History cleared" } }
+      }
+    },
+    "/generate": {
+      "post": {
+        "summary": "Generate text or image",
+        "requestBody": { "required": true, "content": { "application/json": { "schema": { "type": "object", "properties": { "type": { "type": "string", "enum": ["text","image"] }, "prompt": { "type": "string" }, "width": { "type": "integer" }, "height": { "type": "integer" }, "seed": { "type": "integer" } }, "required": ["type","prompt"] } } } },
+        "responses": { "200": { "description": "Resultaat van generate()" } }
+      }
+    }
+  }
+}
