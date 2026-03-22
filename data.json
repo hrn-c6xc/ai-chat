@@ -1,41 +1,53 @@
 {
   "groups": [
     {
+      "title": "Welcome",
+      "items": [
+        {
+          "id": "welcome",
+          "label": "Getting Started",
+          "icon": "smile",
+          "badge": "Intro",
+          "content": "# Welcome to AIClient Documentation\n\nThis documentation will guide you through using the AIClient library to interact with the Pollinations AI API. AIClient allows you to generate both text and image outputs with flexible configuration.\n\nYou can control model selection, set system prompts for text generation, adjust image dimensions, manage retries, and handle conversation history. All features are designed to provide a smooth, reproducible, and reliable experience.\n\n### What you will learn:\n1. How to set up the AIClient instance.\n2. Core configuration: API key, model, and timeout.\n3. Advanced settings: seed, retry logic, image dimensions, and clearing history.\n4. How to generate text and image outputs.\n\nStart by setting your API key and choosing a model, then explore the core and advanced configuration options to tailor AI behavior to your needs."
+        }
+      ]
+    },
+    {
       "title": "AI Client",
       "items": [
         {
           "id": "ai-client-core",
           "label": "Core Configuration",
           "icon": "settings",
-          "badge": "Config",
+          "badge": "Required",
           "children": [
             {
               "id": "api-key",
               "label": "API Key",
               "icon": "key",
               "badge": "Required",
-              "content": "Set your API key for API requests.\n\n```javascript\nclient.setApiKey('YOUR_API_KEY');\n```"
+              "content": "# API Key\n\nThis parameter is required and specifies your personal API key for authenticating requests to the AI service. Without this key, the client cannot generate text or images.\n\n**Usage:**\n```javascript\nclient.setApiKey('YOUR_API_KEY');\n```\n**Type:** string\n**Default:** null"
             },
             {
               "id": "model",
               "label": "Model",
               "icon": "cpu",
-              "badge": "Optional",
-              "content": "Set the model for text/image generation.\n\n```javascript\nclient.setModel('flux');\n```"
+              "badge": "Required",
+              "content": "# Model\n\nSpecifies the AI model to use for generation. This is a required field. Examples include 'flux' or other supported models. The model determines the style, capability, and output type compatibility.\n\n**Usage:**\n```javascript\nclient.setModel('flux');\n```\n**Type:** string\n**Required:** Yes\n**Default:** none"
             },
             {
               "id": "system-prompt",
               "label": "System Prompt",
               "icon": "edit-3",
-              "badge": "Optional",
-              "content": "Set the system prompt guiding the AI.\n\n```javascript\nclient.setSystemPrompt('You are a helpful assistant.');\n```"
+              "badge": "Text Only",
+              "content": "# System Prompt\n\nThis optional parameter is only relevant for text models. It defines the initial instruction or behavior of the AI, helping guide responses in a specific style or tone.\n\n**Usage:**\n```javascript\nclient.setSystemPrompt('You are a helpful assistant.');\n```\n**Type:** string\n**Applicable Only For:** text generation"
             },
             {
               "id": "timeout",
               "label": "Timeout",
               "icon": "clock",
               "badge": "Optional",
-              "content": "Set request timeout in milliseconds.\n\n```javascript\nclient.setTimeout(30000);\n```"
+              "content": "# Timeout\n\nSets the maximum time in milliseconds that the client will wait for a response before aborting the request. Useful for preventing long waits on slow connections.\n\n**Usage:**\n```javascript\nclient.setTimeout(30000);\n```\n**Type:** number\n**Default:** 30000"
             }
           ]
         },
@@ -43,35 +55,35 @@
           "id": "ai-client-advanced",
           "label": "Advanced Settings",
           "icon": "sliders",
-          "badge": "Advanced",
+          "badge": "Optional",
           "children": [
             {
               "id": "seed",
               "label": "Seed",
               "icon": "shuffle",
               "badge": "Optional",
-              "content": "Set a random seed for reproducibility.\n\n```javascript\nclient.setSeed(12345);\n```"
+              "content": "# Seed\n\nA numeric seed used for reproducible outputs. If specified, the same prompt with the same seed will return identical results for both text and images.\n\n**Usage:**\n```javascript\nclient.setSeed(12345);\n```\n**Type:** number or null\n**Default:** null"
             },
             {
               "id": "retry",
               "label": "Retry Logic",
               "icon": "refresh-cw",
               "badge": "Optional",
-              "content": "Configure retry attempts and delay.\n\n```javascript\nclient.setRetry(true, 2, 1000);\n```"
+              "content": "# Retry Logic\n\nEnables automatic retries on failed requests, including 5xx server errors, 429 rate limits, or timeouts. Configure the number of attempts and delay between them.\n\n**Usage:**\n```javascript\nclient.setRetry(true, 2, 1000);\n```\n**Parameters:**\n- `enabled` (boolean) — turn retries on or off\n- `attempts` (number) — maximum retry attempts\n- `delay` (number) — milliseconds to wait between retries\n**Default:** retry enabled, 2 attempts, 1000ms delay"
             },
             {
               "id": "dimensions",
               "label": "Image Dimensions",
               "icon": "maximize-2",
               "badge": "Image Only",
-              "content": "Set width and height for image generation.\n\n```javascript\nclient.setDimensions(1024, 1024);\n```"
+              "content": "# Image Dimensions\n\nSpecifies the width and height in pixels for image generation. Only applies when `type` is set to 'image'.\n\n**Usage:**\n```javascript\nclient.setDimensions(1024, 1024);\n```\n**Parameters:**\n- `width` (number) — image width in pixels\n- `height` (number) — image height in pixels\n**Default:** 1024 x 1024"
             },
             {
               "id": "clear-history",
               "label": "Clear History",
               "icon": "trash-2",
               "badge": "Optional",
-              "content": "Clear stored conversation history.\n\n```javascript\nclient.clearHistory();\n```"
+              "content": "# Clear History\n\nClears stored conversation history. Only relevant for text generation, where the client keeps prior messages for context.\n\n**Usage:**\n```javascript\nclient.clearHistory();\n```\n**Type:** none"
             }
           ]
         },
@@ -86,14 +98,14 @@
               "label": "Generate Text",
               "icon": "file-text",
               "badge": "Text",
-              "content": "Generate text response from a prompt.\n\n```javascript\nclient.setType('text');\nconst text = await client.generate('Explain AIClient usage');\nconsole.log(text);\n```"
+              "content": "# Generate Text\n\nGenerates a text response based on the provided prompt. Must have `apiKey` and `model` set. Optional: `systemPrompt` guides the text style.\n\n**Usage:**\n```javascript\nclient.setType('text');\nconst response = await client.generate('Explain AIClient usage');\nconsole.log(response);\n```\n**Returns:** string\n**Throws:** if `apiKey` not set or prompt empty"
             },
             {
               "id": "generate-image",
               "label": "Generate Image",
               "icon": "image",
               "badge": "Image",
-              "content": "Generate image from a prompt.\n\n```javascript\nclient.setType('image');\nconst blob = await client.generate('A futuristic city skyline');\nconst url = URL.createObjectURL(blob);\ndocument.querySelector('img').src = url;\n```\n\n> Note: `setType('image')` only works correctly after the client instance is created and the type is set explicitly before calling `generate()`."
+              "content": "# Generate Image\n\nGenerates an image based on the prompt. Requires `apiKey`, `model`, and image dimensions.\n\n**Usage:**\n```javascript\nclient.setType('image');\nconst blob = await client.generate('A futuristic city skyline');\nconst url = URL.createObjectURL(blob);\ndocument.querySelector('img').src = url;\n```\n**Returns:** Blob of type 'image/png'\n**Notes:** set `width` and `height` before generating images."
             }
           ]
         }
