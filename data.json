@@ -1,84 +1,101 @@
 {
   "groups": [
     {
-      "title": "AI Client Documentation",
+      "title": "AI Client",
       "items": [
         {
-          "id": "ai-client-constructor",
-          "label": "Constructor",
-          "icon": "gear",
-          "badge": "Init",
-          "content": "# Constructor\n\nInitializes a new AIClient instance with default configuration.\n\n```javascript\nconst client = new AIClient();\n```\n\n### Default Configuration\n- `apiKey`: `null` (must be set)\n- `model`: `'flux'`\n- `systemPrompt`: `'You are a helpful assistant.'`\n- `type`: `'text'` (options: 'text', 'image')\n- `width`: `1024` (for images)\n- `height`: `1024` (for images)\n- `history`: `[]` (conversation history)\n- `historyLimit`: `10`\n- `timeout`: `30000` ms\n- `seed`: `null`\n- `retry`: `true`\n- `retryAttempts`: `2`\n- `retryDelay`: `1000` ms"
-        },
-        {
-          "id": "set-api-key",
-          "label": "setApiKey(apiKey)",
-          "icon": "key",
+          "id": "ai-client-core",
+          "label": "Core Configuration",
+          "icon": "settings",
           "badge": "Config",
-          "content": "# setApiKey(apiKey)\n\nSet your API key for accessing the AI service.\n\n```javascript\nclient.setApiKey('YOUR_API_KEY');\n```\n\n- **Parameter:** `apiKey` (string)\n- **Returns:** `this` (for chaining)\n- **Notes:** Must be set before calling `generate()`."
+          "children": [
+            {
+              "id": "api-key",
+              "label": "API Key",
+              "icon": "key",
+              "badge": "Required",
+              "content": "Set your API key for API requests.\n\n```javascript\nclient.setApiKey('YOUR_API_KEY');\n```"
+            },
+            {
+              "id": "model",
+              "label": "Model",
+              "icon": "cpu",
+              "badge": "Optional",
+              "content": "Set the model for text/image generation.\n\n```javascript\nclient.setModel('flux');\n```"
+            },
+            {
+              "id": "system-prompt",
+              "label": "System Prompt",
+              "icon": "edit-3",
+              "badge": "Optional",
+              "content": "Set the system prompt guiding the AI.\n\n```javascript\nclient.setSystemPrompt('You are a helpful assistant.');\n```"
+            },
+            {
+              "id": "timeout",
+              "label": "Timeout",
+              "icon": "clock",
+              "badge": "Optional",
+              "content": "Set request timeout in milliseconds.\n\n```javascript\nclient.setTimeout(30000);\n```"
+            }
+          ]
         },
         {
-          "id": "set-model",
-          "label": "setModel(model)",
-          "icon": "cpu",
-          "badge": "Config",
-          "content": "# setModel(model)\n\nSelect the model to use for generation.\n\n```javascript\nclient.setModel('flux');\n```\n\n- **Parameter:** `model` (string)\n- **Returns:** `this`\n- **Default:** `'flux'`"
+          "id": "ai-client-advanced",
+          "label": "Advanced Settings",
+          "icon": "sliders",
+          "badge": "Advanced",
+          "children": [
+            {
+              "id": "seed",
+              "label": "Seed",
+              "icon": "shuffle",
+              "badge": "Optional",
+              "content": "Set a random seed for reproducibility.\n\n```javascript\nclient.setSeed(12345);\n```"
+            },
+            {
+              "id": "retry",
+              "label": "Retry Logic",
+              "icon": "refresh-cw",
+              "badge": "Optional",
+              "content": "Configure retry attempts and delay.\n\n```javascript\nclient.setRetry(true, 2, 1000);\n```"
+            },
+            {
+              "id": "dimensions",
+              "label": "Image Dimensions",
+              "icon": "maximize-2",
+              "badge": "Image Only",
+              "content": "Set width and height for image generation.\n\n```javascript\nclient.setDimensions(1024, 1024);\n```"
+            },
+            {
+              "id": "clear-history",
+              "label": "Clear History",
+              "icon": "trash-2",
+              "badge": "Optional",
+              "content": "Clear stored conversation history.\n\n```javascript\nclient.clearHistory();\n```"
+            }
+          ]
         },
         {
-          "id": "set-type",
-          "label": "setType(type)",
-          "icon": "switch-horizontal",
-          "badge": "Config",
-          "content": "# setType(type)\n\nSet the output type: `'text'` or `'image'`.\n\n```javascript\nclient.setType('image');\n```\n\n- **Parameter:** `type` (string)\n- **Returns:** `this`\n- **Default:** `'text'`\n- **Notes:** Image generation requires `width` and `height` to be set appropriately."
-        },
-        {
-          "id": "set-system-prompt",
-          "label": "setSystemPrompt(prompt)",
-          "icon": "message-square",
-          "badge": "Config",
-          "content": "# setSystemPrompt(prompt)\n\nSet the system prompt that guides text generation.\n\n```javascript\nclient.setSystemPrompt('You are a helpful assistant.');\n```\n\n- **Parameter:** `prompt` (string)\n- **Returns:** `this`\n- **Notes:** Only applies to `'text'` type outputs."
-        },
-        {
-          "id": "set-timeout",
-          "label": "setTimeout(ms)",
-          "icon": "clock",
-          "badge": "Config",
-          "content": "# setTimeout(ms)\n\nSet the request timeout in milliseconds.\n\n```javascript\nclient.setTimeout(30000);\n```\n\n- **Parameter:** `ms` (number)\n- **Returns:** `this`\n- **Default:** `30000`\n- **Behavior:** If request exceeds timeout, an `AbortError` is thrown and retried if retries enabled."
-        },
-        {
-          "id": "set-seed",
-          "label": "setSeed(seed)",
-          "icon": "shuffle",
-          "badge": "Config",
-          "content": "# setSeed(seed)\n\nSet a random seed for reproducibility.\n\n```javascript\nclient.setSeed(12345);\n```\n\n- **Parameter:** `seed` (number or null)\n- **Returns:** `this`\n- **Notes:** Useful for generating the same image or text output consistently."
-        },
-        {
-          "id": "set-dimensions",
-          "label": "setDimensions(width, height)",
-          "icon": "maximize",
-          "badge": "Config",
-          "content": "# setDimensions(width, height)\n\nSet the width and height for image generation.\n\n```javascript\nclient.setDimensions(1024, 1024);\n```\n\n- **Parameters:**\n  - `width` (number)\n  - `height` (number)\n- **Returns:** `this`\n- **Notes:** Only applies when `type` is `'image'`."
-        },
-        {
-          "id": "set-retry",
-          "label": "setRetry(enabled, attempts, delay)",
-          "icon": "refresh-cw",
-          "badge": "Config",
-          "content": "# setRetry(enabled, attempts, delay)\n\nConfigure retry behavior for failed requests.\n\n```javascript\nclient.setRetry(true, 2, 1000);\n```\n\n- **Parameters:**\n  - `enabled` (boolean)\n  - `attempts` (number, default `2`)\n  - `delay` (ms, default `1000`)\n- **Returns:** `this`\n- **Notes:** Only retries for 5xx or 429 HTTP errors or timeouts."
-        },
-        {
-          "id": "clear-history",
-          "label": "clearHistory()",
-          "icon": "trash-2",
-          "badge": "State",
-          "content": "# clearHistory()\n\nClears the conversation history used in text generation.\n\n```javascript\nclient.clearHistory();\n```\n\n- **Returns:** `this`\n- **Notes:** Maintains a limited history for context; clearing is useful to reset the conversation."
-        },
-        {
-          "id": "generate",
-          "label": "generate(prompt)",
+          "id": "ai-client-generate",
+          "label": "Generate Output",
           "icon": "play-circle",
           "badge": "Core",
-          "content": "# generate(prompt)\n\nGenerate a response based on the current configuration.\n\n```javascript\nconst output = await client.generate('Explain AIClient usage');\n```\n\n- **Parameter:** `prompt` (string)\n- **Returns:**\n  - If `type` is `'text'`: `string`\n  - If `type` is `'image'`: `Blob` (PNG)\n- **Throws:**\n  - Error if `apiKey` not set\n  - Error if `prompt` is empty\n  - Error on request timeout\n- **Retry Behavior:** Retries up to `retryAttempts` with `retryDelay` on HTTP 5xx/429 or timeout.\n\n### Example for Image\n```javascript\nclient.setType('image');\nconst blob = await client.generate('A futuristic city skyline');\nconst url = URL.createObjectURL(blob);\ndocument.querySelector('img').src = url;\n```"
+          "children": [
+            {
+              "id": "generate-text",
+              "label": "Generate Text",
+              "icon": "file-text",
+              "badge": "Text",
+              "content": "Generate text response from a prompt.\n\n```javascript\nclient.setType('text');\nconst text = await client.generate('Explain AIClient usage');\nconsole.log(text);\n```"
+            },
+            {
+              "id": "generate-image",
+              "label": "Generate Image",
+              "icon": "image",
+              "badge": "Image",
+              "content": "Generate image from a prompt.\n\n```javascript\nclient.setType('image');\nconst blob = await client.generate('A futuristic city skyline');\nconst url = URL.createObjectURL(blob);\ndocument.querySelector('img').src = url;\n```\n\n> Note: `setType('image')` only works correctly after the client instance is created and the type is set explicitly before calling `generate()`."
+            }
+          ]
         }
       ]
     }
