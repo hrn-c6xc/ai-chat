@@ -4,11 +4,11 @@
       "title": "Welcome",
       "items": [
         {
-          "id": "welcome",
+          "id": "starter",
           "label": "Getting Started",
           "icon": "smile",
           "badge": "Intro",
-          "content": "# Welcome to AIClient Documentation\n\nThis documentation will guide you through using the AIClient library to interact with the Pollinations AI API. AIClient allows you to generate both text and image outputs with flexible configuration.\n\nYou can control model selection, set system prompts for text generation, adjust image dimensions, manage retries, and handle conversation history. All features are designed to provide a smooth, reproducible, and reliable experience.\n\n### What you will learn:\n1. How to set up the AIClient instance.\n2. Core configuration: API key, model, and timeout.\n3. Advanced settings: seed, retry logic, image dimensions, and clearing history.\n4. How to generate text and image outputs.\n\nStart by setting your API key and choosing a model, then explore the core and advanced configuration options to tailor AI behavior to your needs."
+          "content": "# Welcome to AIClient Documentation\n\nAIClient is a lightweight, fully-featured JavaScript client for interacting with the Pollinations AI API. It enables you to generate text and images, manage retries, control seeds for reproducibility, and handle conversation history in an organized and reliable way.\n\nThis guide provides everything you need to start using AIClient in any web environment.\n\n## Features\n- Text generation with system prompts for guidance.\n- Image generation with configurable dimensions.\n- Retry logic for reliable request handling.\n- Optional seeding for reproducible outputs.\n- History management for text conversations.\n\n## Starter Example\nBelow is a full HTML example demonstrating how to include AIClient via a CDN, initialize it, and generate text or images interactively.\n\n```html\n<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>AIClient Starter Example</title>\n  <style>\n    body { font-family: sans-serif; margin: 20px; }\n    textarea { width: 100%; height: 80px; margin-bottom: 10px; }\n    button { margin-right: 5px; }\n    #outputText { margin-top: 10px; white-space: pre-wrap; }\n    #outputImage { max-width: 400px; display: block; margin-top: 10px; }\n  </style>\n</head>\n<body>\n\n<h1>AIClient Starter Example</h1>\n<textarea id=\"prompt\" placeholder=\"Enter your prompt here\"></textarea>\n<button id=\"generateText\">Generate Text</button>\n<button id=\"generateImage\">Generate Image</button>\n<div id=\"outputText\"></div>\n<img id=\"outputImage\" />\n\n<!-- Include AIClient via CDN -->\n<script src=\"https://cdn.jsdelivr.net/gh/HyperRushNet/hrn-ai/client/1.0.3.min.js\"></script>\n<script>\n  // Initialize AIClient\n  const client = new AIClient()\n    .setApiKey('YOUR_API_KEY')      // REQUIRED: your personal API key\n    .setModel('flux')               // REQUIRED: model name\n    .setSystemPrompt('You are a helpful assistant.') // optional for text\n    .setTimeout(30000)              // optional, default 30000ms\n    .setRetry(true, 2, 1000);       // optional retry logic\n\n  // Generate text\n  document.getElementById('generateText').addEventListener('click', async () => {\n    const prompt = document.getElementById('prompt').value;\n    if (!prompt) return alert('Please enter a prompt');\n    client.setType('text');\n    try {\n      const text = await client.generate(prompt);\n      document.getElementById('outputText').innerText = text;\n    } catch (err) {\n      console.error(err);\n      alert('Error generating text');\n    }\n  });\n\n  // Generate image\n  document.getElementById('generateImage').addEventListener('click', async () => {\n    const prompt = document.getElementById('prompt').value;\n    if (!prompt) return alert('Please enter a prompt');\n    client.setType('image').setDimensions(512, 512);\n    try {\n      const blob = await client.generate(prompt);\n      const url = URL.createObjectURL(blob);\n      document.getElementById('outputImage').src = url;\n    } catch (err) {\n      console.error(err);\n      alert('Error generating image');\n    }\n  });\n</script>\n</body>\n</html>\n```\n\nThis starter example demonstrates:\n- Including the library via CDN.\n- Initializing the client with API key, model, timeout, and optional system prompt.\n- Generating text and image outputs interactively.\n- Displaying outputs in the page with minimal UI."
         }
       ]
     },
@@ -26,28 +26,28 @@
               "label": "API Key",
               "icon": "key",
               "badge": "Required",
-              "content": "# API Key\n\nThis parameter is required and specifies your personal API key for authenticating requests to the AI service. Without this key, the client cannot generate text or images.\n\n**Usage:**\n```javascript\nclient.setApiKey('YOUR_API_KEY');\n```\n**Type:** string\n**Default:** null"
+              "content": "# API Key\n\n**Description:** Your personal key to authenticate requests with the AI service. Must be set before any request.\n\n**Usage:**\n```javascript\nclient.setApiKey('YOUR_API_KEY');\n```\n**Type:** string\n**Required:** Yes\n**Default:** null"
             },
             {
               "id": "model",
               "label": "Model",
               "icon": "cpu",
               "badge": "Required",
-              "content": "# Model\n\nSpecifies the AI model to use for generation. This is a required field. Examples include 'flux' or other supported models. The model determines the style, capability, and output type compatibility.\n\n**Usage:**\n```javascript\nclient.setModel('flux');\n```\n**Type:** string\n**Required:** Yes\n**Default:** none"
+              "content": "# Model\n\n**Description:** The AI model to use. Determines output style, capabilities, and type compatibility. This is required for all generation.\n\n**Usage:**\n```javascript\nclient.setModel('flux');\n```\n**Type:** string\n**Required:** Yes\n**Default:** none"
             },
             {
               "id": "system-prompt",
               "label": "System Prompt",
               "icon": "edit-3",
               "badge": "Text Only",
-              "content": "# System Prompt\n\nThis optional parameter is only relevant for text models. It defines the initial instruction or behavior of the AI, helping guide responses in a specific style or tone.\n\n**Usage:**\n```javascript\nclient.setSystemPrompt('You are a helpful assistant.');\n```\n**Type:** string\n**Applicable Only For:** text generation"
+              "content": "# System Prompt\n\n**Description:** Optional prompt that guides text generation. Only applies to text models.\n\n**Usage:**\n```javascript\nclient.setSystemPrompt('You are a helpful assistant.');\n```\n**Type:** string\n**Applicable Only For:** text"
             },
             {
               "id": "timeout",
               "label": "Timeout",
               "icon": "clock",
               "badge": "Optional",
-              "content": "# Timeout\n\nSets the maximum time in milliseconds that the client will wait for a response before aborting the request. Useful for preventing long waits on slow connections.\n\n**Usage:**\n```javascript\nclient.setTimeout(30000);\n```\n**Type:** number\n**Default:** 30000"
+              "content": "# Timeout\n\n**Description:** Maximum time (ms) to wait for a response before aborting.\n\n**Usage:**\n```javascript\nclient.setTimeout(30000);\n```\n**Type:** number\n**Default:** 30000"
             }
           ]
         },
@@ -62,28 +62,28 @@
               "label": "Seed",
               "icon": "shuffle",
               "badge": "Optional",
-              "content": "# Seed\n\nA numeric seed used for reproducible outputs. If specified, the same prompt with the same seed will return identical results for both text and images.\n\n**Usage:**\n```javascript\nclient.setSeed(12345);\n```\n**Type:** number or null\n**Default:** null"
+              "content": "# Seed\n\n**Description:** Numeric seed for reproducible outputs. Same prompt + seed = identical results.\n\n**Usage:**\n```javascript\nclient.setSeed(12345);\n```\n**Type:** number | null\n**Default:** null"
             },
             {
               "id": "retry",
               "label": "Retry Logic",
               "icon": "refresh-cw",
               "badge": "Optional",
-              "content": "# Retry Logic\n\nEnables automatic retries on failed requests, including 5xx server errors, 429 rate limits, or timeouts. Configure the number of attempts and delay between them.\n\n**Usage:**\n```javascript\nclient.setRetry(true, 2, 1000);\n```\n**Parameters:**\n- `enabled` (boolean) — turn retries on or off\n- `attempts` (number) — maximum retry attempts\n- `delay` (number) — milliseconds to wait between retries\n**Default:** retry enabled, 2 attempts, 1000ms delay"
+              "content": "# Retry Logic\n\n**Description:** Automatically retry failed requests (timeouts, 5xx, 429). Configure attempts and delay.\n\n**Usage:**\n```javascript\nclient.setRetry(true, 2, 1000);\n```\n**Parameters:**\n- `enabled` (boolean)\n- `attempts` (number)\n- `delay` (ms)\n**Default:** enabled=true, attempts=2, delay=1000"
             },
             {
               "id": "dimensions",
               "label": "Image Dimensions",
               "icon": "maximize-2",
               "badge": "Image Only",
-              "content": "# Image Dimensions\n\nSpecifies the width and height in pixels for image generation. Only applies when `type` is set to 'image'.\n\n**Usage:**\n```javascript\nclient.setDimensions(1024, 1024);\n```\n**Parameters:**\n- `width` (number) — image width in pixels\n- `height` (number) — image height in pixels\n**Default:** 1024 x 1024"
+              "content": "# Image Dimensions\n\n**Description:** Width & height for image generation. Only for type='image'.\n\n**Usage:**\n```javascript\nclient.setDimensions(1024,1024);\n```\n**Type:** number\n**Default:** 1024 x 1024"
             },
             {
               "id": "clear-history",
               "label": "Clear History",
               "icon": "trash-2",
               "badge": "Optional",
-              "content": "# Clear History\n\nClears stored conversation history. Only relevant for text generation, where the client keeps prior messages for context.\n\n**Usage:**\n```javascript\nclient.clearHistory();\n```\n**Type:** none"
+              "content": "# Clear History\n\n**Description:** Clears stored conversation history. Only applies for text.\n\n**Usage:**\n```javascript\nclient.clearHistory();\n```\n**Type:** none"
             }
           ]
         },
@@ -98,14 +98,14 @@
               "label": "Generate Text",
               "icon": "file-text",
               "badge": "Text",
-              "content": "# Generate Text\n\nGenerates a text response based on the provided prompt. Must have `apiKey` and `model` set. Optional: `systemPrompt` guides the text style.\n\n**Usage:**\n```javascript\nclient.setType('text');\nconst response = await client.generate('Explain AIClient usage');\nconsole.log(response);\n```\n**Returns:** string\n**Throws:** if `apiKey` not set or prompt empty"
+              "content": "# Generate Text\n\n**Description:** Generates a text response for a prompt. Requires API key and model.\n\n**Usage:**\n```javascript\nclient.setType('text');\nconst text = await client.generate('Explain AIClient usage');\nconsole.log(text);\n```\n**Returns:** string\n**Throws:** if `apiKey` missing or prompt empty"
             },
             {
               "id": "generate-image",
               "label": "Generate Image",
               "icon": "image",
               "badge": "Image",
-              "content": "# Generate Image\n\nGenerates an image based on the prompt. Requires `apiKey`, `model`, and image dimensions.\n\n**Usage:**\n```javascript\nclient.setType('image');\nconst blob = await client.generate('A futuristic city skyline');\nconst url = URL.createObjectURL(blob);\ndocument.querySelector('img').src = url;\n```\n**Returns:** Blob of type 'image/png'\n**Notes:** set `width` and `height` before generating images."
+              "content": "# Generate Image\n\n**Description:** Generates an image for a prompt. Requires API key, model, and dimensions.\n\n**Usage:**\n```javascript\nclient.setType('image');\nconst blob = await client.generate('A futuristic city skyline');\nconst url = URL.createObjectURL(blob);\ndocument.querySelector('img').src = url;\n```\n**Returns:** Blob (image/png)\n**Notes:** Ensure width and height are set before generating."
             }
           ]
         }
