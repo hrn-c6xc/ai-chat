@@ -8,7 +8,7 @@
           "label": "Getting Started",
           "icon": "smile",
           "badge": "Intro",
-          "content": "# Starter Integration\n\nTo quickly start using AIClient in your web page, include the library via a `<script>` tag from jsDelivr and initialize it with basic configuration.\n\n### Include AIClient\n```html\n<script src=\"https://cdn.jsdelivr.net/gh/HyperRushNet/hrn-ai/client/1.0.3.min.js\"></script>\n```\n\n### Initialize AIClient\n```javascript\nconst client = new AIClient()\n  .setApiKey('YOUR_API_KEY') // REQUIRED: your personal API key\n  .setModel('flux')          // REQUIRED: model name\n  .setSystemPrompt('You are a helpful assistant.') // optional for text\n  .setTimeout(30000)         // optional, default 30000ms\n  .setRetry(true, 2, 1000);  // optional retry logic\n```\n\nThis minimal setup allows you to immediately generate text or image outputs using AIClient."
+          "content": "# Starter Integration\n\nTo quickly start using AIClient in your web page, include the library via a `<script>` tag from jsDelivr and initialize it with basic configuration.\n\n### Include AIClient\n```html\n<script src=\"https://cdn.jsdelivr.net/gh/HyperRushNet/hrn-ai/client/1.0.3.min.js\"></script>\n```\n\n### Initialize AIClient\n```javascript\nconst client = new AIClient()\n  .setApiKey('YOUR_API_KEY') // REQUIRED\n```\n\nThis minimal setup allows you to immediately generate text or image outputs using AIClient."
         }
       ]
     },
